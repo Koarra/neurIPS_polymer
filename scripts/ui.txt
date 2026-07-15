@@ -1,0 +1,40 @@
+1. Opening / the problem (3 min)
+"Quick question before I start: who here has looked for a piece of documentation, found it, and had no idea whether it was still accurate? [Pause — let hands go up or heads nod.]
+That's the problem I want to solve today. And it comes from a tension in how we've handled docs. We want documentation reviewed and version-controlled like code — changes go through merge requests, nothing lands unchecked, and we can always see who changed what and when. But we also want docs easy to browse and quick to fix — which is what a wiki does well.
+Until now, those pulled in opposite directions. Docs in the repo were trustworthy but buried. Edits in the wiki were convenient but invisible — no review, no history, no way to know if a page had quietly drifted. We were forced to choose between trustworthy and usable.
+I've set up something that gives us both. Let me show you."
+2. The solution in one sentence (2 min)
+"The entire idea fits in one sentence — everything after this is detail:
+The repository is the source of truth. The wiki is an automatically published copy that anyone can also edit. And GitLab CI keeps the two in sync, both directions.
+Think of it like this: the repo is where documentation is made; the wiki is where documentation is read. And the pipeline is the bridge that means nobody has to think about keeping them aligned — it just happens."
+3. How it works — the diagram (5 min)
+"Here's the flow. [Diagram up.]
+Left side: the repository. Docs live in a docs/ folder, edited the same way we edit code. Right side: the wiki — what everyone browses.
+Two automatic movements connect them.
+Movement one, left to right: the moment documentation merges to main, CI publishes it to the wiki. Merge at 10:00, live on the wiki at 10:02. The wiki is never stale relative to what we've approved.
+Movement two, right to left: every night, a scheduled job asks 'did anyone edit the wiki directly today?' If yes, it doesn't silently overwrite anything — it opens a merge request bringing those edits into the repo. A human reviews it, merges it, done. Nothing enters our source of truth without eyes on it, no matter where it was typed.
+Why CI and not GitLab's built-in mirroring? Because mirroring on our tier is one-way only — it can push but never pull back. CI gives us both directions, with review built in, at no extra cost. [If nobody asks, move on — don't dwell.]"
+4. Live demo (8–10 min)
+"Enough diagrams — let me show you the real thing.
+Direction one: repo to wiki. Here's our docs folder. I'll change this line… open a merge request… [colleague approves or pre-approved MR ready]… merge. Now watch the pipeline. [While it runs:] This is exactly the same flow you already know from code — nothing new to learn. [Pipeline green.] And… refresh the wiki. There's the change. Thirty seconds from merge to published.
+Direction two: wiki back to repo. Now the part that used to be invisible. I'll edit this page right here in the wiki UI — fix this typo — save. In production this syncs overnight, but I'll trigger it manually now. [Trigger.] Pipeline runs… and look at Merge Requests. A new MR, opened by the pipeline, containing exactly my wiki edit. I review it like any MR, merge, and both sides are identical again.
+That's the whole system. Wherever you edit, it ends up reviewed, versioned, and published."
+5. What it means for you — the workflow (5 min)
+"So what changes for you? Honestly — very little. Two habits:
+Habit one: real work happens in the repo. Writing a new page, restructuring, anything substantial — branch, MR, review, merge. Identical to code.
+Habit two: quick fixes are fine in the wiki. Spot a typo while reading? Fix it right there. It'll come back to us as a merge request automatically. You're not breaking anything by editing the wiki — that's the point.
+Two things to keep in mind. First, wiki edits reach the repo overnight, not instantly — so don't be surprised by the delay. Second, if the same page is edited in both places on the same day, the repo version wins, and the conflict shows up in the sync MR for whoever reviews it. Simple rule of thumb: reading and spot-fixing → wiki; writing → repo.
+One formatting note for when you write: links between pages go without the .md extension — [Setup](setup) — so they render properly on the wiki. It's on the one-pager I'm sharing after this."
+6. Next steps and Q&A (3–4 min)
+"Three things to land this:
+One — we need an owner for reviewing the nightly sync MRs. It's a five-minute job, most days zero. Volunteers, or I'll nominate. [Smile.]
+Two — I propose we go live on [date]. From then on, docs/ is the home of documentation.
+Three — there's an access token behind the pipeline that needs periodic rotation. I'll own that.
+I'm sending around a one-page reference with everything from today. Questions?"
+Prepared answers for the likely tough questions:
+"What if someone deletes a page in the wiki?" — "The deletion comes back in the nightly MR like any other change. The reviewer sees a deleted file in the diff and decides — merge it if intended, close it if not. Nothing is ever silently lost, because the repo has full history either way."
+"What if the pipeline breaks?" — "Worst case, the wiki goes stale until we fix it — the repo is unaffected, and no data is lost. The pipeline fails loudly, so we'd know."
+"What about images?" — "Images added in the repo under docs/ travel with the sync. Images uploaded via the wiki UI come back in the nightly MR too. Both directions handle them."
+"Why not just give everyone repo access and skip the wiki?" — "The wiki is the reading experience — searchable, browsable, zero-friction fixes. We're not choosing between them anymore; that's the whole point."
+"Was it hard to set up?" — "A few config details to get right, but it's stable now. Happy to walk anyone through the pipeline after."
+Want me to also produce the built files — the PPTX deck and the handout — now that we can retry the environment?
