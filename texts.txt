@@ -1,53 +1,11 @@
-stages:
-  - publish
-  - sync
-
-variables:
-  GIT_STRATEGY: clone
-
-# Repo -> Wiki: publish reviewed docs on every merge to main
 publish-to-wiki:
   stage: publish
   rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
-  script:
-    - git config --global user.email "ci@example.com"
-    - git config --global user.name "Docs CI"
-    - rm -rf /tmp/wiki-clone
-    - git clone "https://oauth2:${WIKI_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.wiki.git" /tmp/wiki-clone
-    # GUARD: refuse to publish over un-synced wiki UI edits
-    - |
-      LAST_AUTHOR=$(git -C /tmp/wiki-clone log -1 --format='%an')
-      if [ "$LAST_AUTHOR" != "Docs CI" ]; then
-        echo "ERROR: The wiki has UI edits by '$LAST_AUTHOR' that have not been synced back."
-        echo "Run the 'Wiki -> repo sync' schedule, merge the resulting MR, then retry this job."
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE != "schedule"'
+(the only change: && $CI_PIPELINE_SOURCE != "schedule")
+While you're in there, also swap the guard to the content-based version so the deadlock can't recur:
+yaml    - |
+      if ! diff -rq wiki /tmp/wiki-clone -x .git -x .gitlab > /dev/null 2>&1; then
+        echo "ERROR: wiki has un-synced UI edits. Run the sync schedule, merge its MR, retry."
         exit 1
       fi
-    - find /tmp/wiki-clone -mindepth 1 -not -path '*/.git*' -delete
-    - cp -r wiki/. /tmp/wiki-clone/
-    - cd /tmp/wiki-clone
-    - git add -A
-    - 'git commit -m "Publish docs from ${CI_COMMIT_SHORT_SHA}" || echo "No changes"'
-    - git push origin HEAD:main || git push origin HEAD:master
-
-# Wiki -> Repo: pull UI edits back as an MR (scheduled)
-sync-wiki-back:
-  stage: sync
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule"'
-  script:
-    - git config --global user.email "ci@example.com"
-    - git config --global user.name "Docs CI"
-    - rm -rf /tmp/wiki-clone
-    - git clone "https://oauth2:${WIKI_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.wiki.git" /tmp/wiki-clone
-    - find wiki -mindepth 1 -not -path '*/.git*' -delete
-    - cp -r /tmp/wiki-clone/. wiki/
-    - rm -rf wiki/.git
-    - git checkout -B wiki-sync
-    - git add wiki/
-    - |
-      if git diff --cached --quiet; then
-        echo "No wiki UI edits to sync"; exit 0
-      fi
-    - git commit -m "Sync wiki UI edits back to repo"
-    - git push -f "https://oauth2:${WIKI_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" wiki-sync -o merge_request.create -o merge_request.target=main
