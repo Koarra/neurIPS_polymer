@@ -1,124 +1,118 @@
 #!/usr/bin/env python3
 """
-Build productivity.json (KMPI #4 input) from the GFIU article upload folder.
-
-Expected folder layout under KMPI_FOLDER / "teams" / "GFIU":
-
-    GFIU/
-      <article_folder_1>/
-        source.pdf and/or source.docx
-      <article_folder_2>/
-        source.docx
-      ...
-
-Each subfolder that contains at least one .pdf or .docx file counts as ONE
-processed article (a folder with both a .pdf and a .docx is still one
-article, not two). The article's month is taken from the earliest
-modification time among its .pdf/.docx files.
-
-There is no per-person attribution available from this folder structure, so
-the team-wide monthly total is divided by config.GFIU_TEAM_SIZE to produce
-avg_articles_per_person. The script fully rebuilds productivity.json from
-the current state of the folder on every run (safe to re-run after new
-articles are added or backdated).
-
-Usage: python3 build_productivity_metrics.py
+Bi-annual productivity KMPI report (KMPI #4)
+Checks last 6 months of article processing data
+Usage: python3 biannual_productivity.py
 """
 
 import sys
 import json
-from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import config as config
-from utils.const import KMPI_FOLDER
-
-ARTICLE_EXTENSIONS = {".pdf", ".docx"}
-GFIU_ARTICLES_DIR = KMPI_FOLDER / "teams" / "GFIU"
-
-
-def article_month(article_dir: Path):
-    """Return the YYYY-MM month for an article folder, or None if it has no article files."""
-    article_files = [
-        f for f in article_dir.iterdir()
-        if f.is_file() and f.suffix.lower() in ARTICLE_EXTENSIONS
-    ]
-    if not article_files:
-        return None
-
-    earliest_mtime = min(f.stat().st_mtime for f in article_files)
-    return datetime.fromtimestamp(earliest_mtime).strftime("%Y-%m")
-
-
-def count_articles_by_month(gfiu_dir: Path) -> tuple[dict, list]:
-    """Count one article per subfolder containing a .pdf/.docx, bucketed by month."""
-    counts = defaultdict(int)
-    skipped = []
-
-    for entry in sorted(gfiu_dir.iterdir()):
-        if not entry.is_dir():
-            continue
-        month = article_month(entry)
-        if month is None:
-            skipped.append(entry.name)
-            continue
-        counts[month] += 1
-
-    return counts, skipped
+from utils.const import KMPI_FOLDER_BIANNUAL_REPORTS
+from mrmp_api_export import generate_mrmp_productivity_json
 
 
 def main():
     print(f"\n{'='*60}")
-    print(f"Build Productivity Metrics (KMPI #4 input)")
+    print(f"Bi-Annual Productivity Report - {datetime.now().strftime('%Y %H%M')}")
     print(f"{'='*60}\n")
 
-    if not GFIU_ARTICLES_DIR.exists():
-        print(f"ERROR: GFIU articles folder not found at {GFIU_ARTICLES_DIR}")
+    # Load productivity data
+    metrics_file = config.PRODUCTION_METRICS_DIR / "productivity.json"
+
+    if not metrics_file.exists():
+        print(f"ERROR: Productivity data not found at {metrics_file}")
+        print(f"\nYou need to track production metrics in this format:")
+        print("""[
+    {"month": "2025-01", "avg_articles_per_person": 210},
+    {"month": "2025-02", "avg_articles_per_person": 225},
+    ...
+]""")
         return 1
 
-    counts, skipped = count_articles_by_month(GFIU_ARTICLES_DIR)
+    with open(metrics_file) as f:
+        all_data = json.load(f)
 
-    if not counts:
-        print(f"ERROR: No article subfolders with .pdf/.docx files found under {GFIU_ARTICLES_DIR}")
+    # Get last 6 months
+    if len(all_data) < 6:
+        print(f"ERROR: Need 6 months of data, found {len(all_data)}")
         return 1
 
-    team_size = config.GFIU_TEAM_SIZE
-    if team_size <= 0:
-        print(f"ERROR: config.GFIU_TEAM_SIZE must be a positive integer, got {team_size}")
-        return 1
+    last_6_months = all_data[-6:]
 
-    productivity = [
-        {
-            "month": month,
-            "avg_articles_per_person": round(count / team_size, 2),
-        }
-        for month, count in sorted(counts.items())
-    ]
+    # Check if any month exceeded limit
+    exceeded = []
+    for data in last_6_months:
+        month = data['month']
+        avg = data['avg_articles_per_person']
 
-    output_file = config.PRODUCTION_METRICS_DIR / "productivity.json"
-    with open(output_file, "w") as f:
-        json.dump(productivity, f, indent=2)
+        if avg > config.MAX_ARTICLES_PER_PERSON:
+            exceeded.append({'month': month, 'avg': avg})
 
-    print(f"Scanned: {GFIU_ARTICLES_DIR}")
-    print(f"Team size: {team_size}")
+    passed = len(exceeded) == 0
 
-    if skipped:
-        print(f"\nSkipped {len(skipped)} subfolder(s) with no .pdf/.docx file:")
-        for name in skipped:
-            print(f"  {name}")
+    # Print report
+    print(f"Period: {last_6_months[0]['month']} to {last_6_months[-1]['month']}")
+    print(f"Baseline: {config.BASELINE_ARTICLES_PER_PERSON} articles/person/month")
+    print(f"Max allowed: {config.MAX_ARTICLES_PER_PERSON} articles/person/month (100% increase)\n")
 
-    print(f"\nMonthly totals:")
-    for month, count in sorted(counts.items()):
-        avg = count / team_size
-        print(f"  {month}: {count} articles / {team_size} people = {avg:.2f} avg/person")
+    print("Monthly values:")
+    for data in last_6_months:
+        avg = data['avg_articles_per_person']
+        increase = ((avg - config.BASELINE_ARTICLES_PER_PERSON) / config.BASELINE_ARTICLES_PER_PERSON) * 100
+        status = "X EXCEEDED" if avg > config.MAX_ARTICLES_PER_PERSON else "✓"
+        print(f"  {data['month']}: {avg:.0f} articles ({increase:+.1f}%) {status}")
 
-    print(f"\nWrote {len(productivity)} month(s) to: {output_file}")
+    if passed:
+        print(f"\n✓ KMPI #4 PASSED")
+    else:
+        print(f"\nX KMPI #4 FAILED - IRR re-assessment required")
+        for ex in exceeded:
+            print(f"  {ex['month']}: {ex['avg']:.0f} articles (exceeded {config.MAX_ARTICLES_PER_PERSON})")
+
+    # Save report — derive period from the data itself, not the run date,
+    # since the report is typically generated after the half-year has ended
+    last_year, last_month = last_6_months[-1]['month'].split('-')
+    semester = "H1" if int(last_month) <= 6 else "H2"
+    year = last_year
+
+    report = {
+        'period': f"{year}_{semester}",
+        'months': [d['month'] for d in last_6_months],
+        'baseline': config.BASELINE_ARTICLES_PER_PERSON,
+        'max_allowed': config.MAX_ARTICLES_PER_PERSON,
+        'passed': passed,
+        'exceeded_months': exceeded,
+        'monthly_values': last_6_months
+    }
+
+    report_file = KMPI_FOLDER_BIANNUAL_REPORTS / f"productivity_{year}_{semester}.json"
+    with open(report_file, 'w') as f:
+        json.dump(report, f, indent=2)
+
+    print(f"\nReport saved to: {report_file}")
+
+    # Generate MRMP API JSON payload for KMPI #4
+    try:
+        mrmp_file = generate_mrmp_productivity_json(
+            report=report,
+            output_dir=KMPI_FOLDER_BIANNUAL_REPORTS,
+            config=config,
+        )
+        print(f"MRMP API JSON saved to: {mrmp_file}")
+    except Exception as e:
+        print(f"ERROR generating MRMP API JSON: {e}")
+        import traceback
+        traceback.print_exc()
+
     print(f"{'='*60}\n")
 
-    return 0
+    return 0 if passed else 1
 
 
 if __name__ == "__main__":
