@@ -1,0 +1,33 @@
+{
+  "scenario_id": "DD-PC-SCENARIO-03",
+  "expected_result": "siap",
+  "expected_path_note": "SC1=N (no exec role) -> SC2=Y -> SC3=Y (40%) -> set_flag -> final=N -> siap",
+  "name": "Synthetic Construction Partner 03 – Forty Percent Owner Of South Sudan Roads Contractor",
+  "client_type": "Natural Person",
+  "domicile": "United Arab Emirates",
+  "family_situation_entries": [],
+  "family_situation_remarks": "",
+  "purpose_of_br": "",
+  "transactions": [],
+  "activities": [
+    "Amira Khalaf holds a 40% shareholding in Nile Route Construction FZE, per the shareholder register. The company grades and paves national trunk roads in South Sudan under contracts with the central Ministry of Roads and Bridges in Juba, which its accounts show as the source of approximately 80% of turnover. Ms Khalaf sits neither on the board nor in management; her involvement is limited to the shareholding, which she holds today."
+  ],
+  "origin_of_assets": [
+    "Inherited capital, partly invested into the shareholding in Nile Route Construction FZE."
+  ],
+  "total_assets": {
+    "total estimated assets": [
+      "15000000 CHF"
+    ],
+    "total liquid assets": [
+      "4000000 CHF"
+    ],
+    "total real estate assets": [
+      "5000000 CHF"
+    ],
+    "total other non-liquid assets": [
+      "6000000 CHF"
+    ],
+    "remarks_total_assets": "The stake in Nile Route Construction FZE is the largest single asset."
+  }
+}

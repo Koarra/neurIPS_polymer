@@ -1,0 +1,33 @@
+{
+  "scenario_id": "DD-PC-SCENARIO-20",
+  "expected_result": "siap",
+  "expected_path_note": "final: sold recently but negotiating a new government project -> not past-only or cooldown clearly not met -> siap",
+  "name": "Synthetic Construction Partner 20 – Former Owner Sold Three Months Ago Negotiating Return",
+  "client_type": "Natural Person",
+  "domicile": "Turkey",
+  "family_situation_entries": [],
+  "family_situation_remarks": "",
+  "purpose_of_br": "",
+  "transactions": [],
+  "activities": [
+    "Mehmet Aydin sold his 60% stake in an Ankara contracting group three months ago; the group builds ministry complexes for the government of Turkmenistan. Most of his wealth consists of the fresh sale proceeds. He told the adviser that he is currently negotiating to lead and co-finance a new government housing project in Ashgabat through a newly incorporated vehicle, with signature expected within months."
+  ],
+  "origin_of_assets": [
+    "Sale of his contracting stake three months ago."
+  ],
+  "total_assets": {
+    "total estimated assets": [
+      "40000000 CHF"
+    ],
+    "total liquid assets": [
+      "25000000 CHF"
+    ],
+    "total real estate assets": [
+      "8000000 CHF"
+    ],
+    "total other non-liquid assets": [
+      "7000000 CHF"
+    ],
+    "remarks_total_assets": "Predominantly recent sale proceeds earmarked for the new venture."
+  }
+}

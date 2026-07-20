@@ -1,0 +1,33 @@
+{
+  "scenario_id": "DD-PC-SCENARIO-14",
+  "expected_result": "exit",
+  "expected_path_note": "exclusion_check=Yes (purely receiving funds, no own engagement) -> exit",
+  "name": "Synthetic Construction Partner 14 – Sister Receiving Transfers From Contractor Sibling",
+  "client_type": "Natural Person",
+  "domicile": "Switzerland",
+  "family_situation_entries": [],
+  "family_situation_remarks": "",
+  "purpose_of_br": "",
+  "transactions": [],
+  "activities": [
+    "Elena Petrova is a schoolteacher in Zurich. Her account receives regular family support transfers from her brother, who owns a construction company active on government projects abroad. She has no role in, claim on, or business dealings with her brother's company; the file records her own income as her teaching salary and the purpose of the account as private savings and the family transfers."
+  ],
+  "origin_of_assets": [
+    "Teaching salary and family gifts from her brother."
+  ],
+  "total_assets": {
+    "total estimated assets": [
+      "900000 CHF"
+    ],
+    "total liquid assets": [
+      "400000 CHF"
+    ],
+    "total real estate assets": [
+      "400000 CHF"
+    ],
+    "total other non-liquid assets": [
+      "100000 CHF"
+    ],
+    "remarks_total_assets": "Savings and a share in an apartment."
+  }
+}

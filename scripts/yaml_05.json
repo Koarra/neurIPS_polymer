@@ -1,0 +1,33 @@
+{
+  "scenario_id": "DD-PC-SCENARIO-05",
+  "expected_result": "siap",
+  "expected_path_note": "Subcontractor directly engaged: SC1=Y or DE4 income=Y (60% of income) -> siap",
+  "name": "Synthetic Construction Partner 05 – Subcontractor Steelworks Sixty Percent Myanmar Projects",
+  "client_type": "Natural Person",
+  "domicile": "Thailand",
+  "family_situation_entries": [],
+  "family_situation_remarks": "",
+  "purpose_of_br": "",
+  "transactions": [],
+  "activities": [
+    "Somchai Prasert is the sole owner and managing director of a structural-steel subcontracting firm in Bangkok. The firm erects steel frames as a subcontractor on airport and dam projects commissioned by Myanmar's national government; invoices to the main contractors on these projects represent about 60% of the firm's annual receipts, and the firm's profits are Mr Prasert's main source of income. The remaining work is private warehouse construction in Thailand."
+  ],
+  "origin_of_assets": [
+    "Profits of the steel subcontracting business built up over 20 years."
+  ],
+  "total_assets": {
+    "total estimated assets": [
+      "9000000 CHF"
+    ],
+    "total liquid assets": [
+      "2000000 CHF"
+    ],
+    "total real estate assets": [
+      "3000000 CHF"
+    ],
+    "total other non-liquid assets": [
+      "4000000 CHF"
+    ],
+    "remarks_total_assets": "Business value and equipment dominate the asset base."
+  }
+}

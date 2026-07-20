@@ -1,0 +1,33 @@
+{
+  "scenario_id": "DD-PC-SCENARIO-09",
+  "expected_result": "exit",
+  "expected_path_note": "sensitive_country_check=No (Norway - strong procurement oversight, low corruption) -> exit",
+  "name": "Synthetic Construction Partner 09 – National Rail Contractor Norway Low Risk Country",
+  "client_type": "Legal Entity",
+  "domicile": "Norway",
+  "family_situation_entries": [],
+  "family_situation_remarks": "",
+  "purpose_of_br": "",
+  "transactions": [],
+  "activities": [
+    "Fjellbane AS builds railway tunnels and track sections for the Norwegian national railway administration under competitively tendered contracts published on the national procurement portal. Around 90% of its revenues come from these Norwegian state contracts. It has no projects outside Norway."
+  ],
+  "origin_of_assets": [
+    "Retained earnings from Norwegian rail contracts."
+  ],
+  "total_assets": {
+    "total estimated assets": [
+      "35000000 CHF"
+    ],
+    "total liquid assets": [
+      "10000000 CHF"
+    ],
+    "total real estate assets": [
+      "5000000 CHF"
+    ],
+    "total other non-liquid assets": [
+      "20000000 CHF"
+    ],
+    "remarks_total_assets": "Tunnel-boring equipment and receivables from the Norwegian state."
+  }
+}

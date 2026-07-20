@@ -1,0 +1,33 @@
+{
+  "scenario_id": "DD-PC-SCENARIO-25",
+  "expected_result": "exit",
+  "expected_path_note": "SC1=N (honorary, non-executive) -> SC2=Y -> SC3=N (5%) -> DE4=N (pension dominates) -> exit",
+  "name": "Synthetic Construction Partner 25 – Honorary Chairman No Executive Role Small Stake",
+  "client_type": "Natural Person",
+  "domicile": "Switzerland",
+  "family_situation_entries": [],
+  "family_situation_remarks": "",
+  "purpose_of_br": "",
+  "transactions": [],
+  "activities": [
+    "Heinrich Baumgartner, aged 78, is the founder and today the honorary chairman of a contracting group active on national infrastructure projects in Angola. Since his retirement nine years ago the honorary title carries no executive authority: he does not attend management meetings, has no signing power and no vote, and appears only at company anniversaries. He retained a 5% stake from the succession; his income is a pension and dividends, the latter a small fraction, and his wealth consists mainly of real estate and bonds accumulated before retirement."
+  ],
+  "origin_of_assets": [
+    "Career earnings as a contractor, converted into real estate and bonds before 2017."
+  ],
+  "total_assets": {
+    "total estimated assets": [
+      "16000000 CHF"
+    ],
+    "total liquid assets": [
+      "5000000 CHF"
+    ],
+    "total real estate assets": [
+      "8000000 CHF"
+    ],
+    "total other non-liquid assets": [
+      "3000000 CHF"
+    ],
+    "remarks_total_assets": "Predominantly real estate and bonds; small residual stake."
+  }
+}

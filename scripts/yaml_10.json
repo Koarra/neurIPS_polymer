@@ -1,0 +1,33 @@
+{
+  "scenario_id": "DD-PC-SCENARIO-10",
+  "expected_result": "exit",
+  "expected_path_note": "exclusion_check=Yes (post-construction services only: maintenance/facility management) -> exit",
+  "name": "Synthetic Construction Partner 10 – Facility Management Public Buildings Kazakhstan",
+  "client_type": "Legal Entity",
+  "domicile": "Kazakhstan",
+  "family_situation_entries": [],
+  "family_situation_remarks": "",
+  "purpose_of_br": "",
+  "transactions": [],
+  "activities": [
+    "AstanaServis LLP holds long-term contracts with Kazakh state bodies for the upkeep of completed government buildings in Astana: cleaning, heating and ventilation maintenance, elevator servicing, security staffing and minor repairs. The company does not carry out construction works; it takes over buildings after handover by the construction contractors. All revenue comes from these operation-and-maintenance contracts."
+  ],
+  "origin_of_assets": [
+    "Fees under the facility-management contracts."
+  ],
+  "total_assets": {
+    "total estimated assets": [
+      "6000000 CHF"
+    ],
+    "total liquid assets": [
+      "2500000 CHF"
+    ],
+    "total real estate assets": [
+      "1000000 CHF"
+    ],
+    "total other non-liquid assets": [
+      "2500000 CHF"
+    ],
+    "remarks_total_assets": "Service vehicles, tools and receivables."
+  }
+}

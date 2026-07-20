@@ -1,0 +1,33 @@
+{
+  "scenario_id": "DD-PC-SCENARIO-15",
+  "expected_result": "exit",
+  "expected_path_note": "business_share_check=No (the business derives only ~10% from sensitive-country government contracts) -> exit — exec role alone does not qualify",
+  "name": "Synthetic Construction Partner 15 – CFO Of Contractor With Ten Percent Government Share",
+  "client_type": "Natural Person",
+  "domicile": "Germany",
+  "family_situation_entries": [],
+  "family_situation_remarks": "",
+  "purpose_of_br": "",
+  "transactions": [],
+  "activities": [
+    "Martin Weiss is the Chief Financial Officer of a Frankfurt construction group. The group's revenue mix, per its annual report: about 75% German private commercial projects, 15% German public tenders, and roughly 10% from a single ministry building project in Angola. Mr Weiss holds no shares in the group. His role and the revenue mix are current."
+  ],
+  "origin_of_assets": [
+    "Executive salary in the construction industry."
+  ],
+  "total_assets": {
+    "total estimated assets": [
+      "5000000 CHF"
+    ],
+    "total liquid assets": [
+      "2000000 CHF"
+    ],
+    "total real estate assets": [
+      "2500000 CHF"
+    ],
+    "total other non-liquid assets": [
+      "500000 CHF"
+    ],
+    "remarks_total_assets": "Salary savings and residential property."
+  }
+}

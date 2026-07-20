@@ -1,0 +1,33 @@
+{
+  "scenario_id": "DD-PC-SCENARIO-26",
+  "expected_result": "siap",
+  "expected_path_note": "business_share=Y (large majority of revenue) -> SC1=N (delegated management, no exec title or board seat) -> SC2=Y (owner) -> SC3=Y (no percentage stated but described as SOLE owner -> defaults to 100%) -> set_flag -> final=N -> siap",
+  "name": "Synthetic Construction Partner 26 – Passive Sole Owner No Percentage Stated",
+  "client_type": "Natural Person",
+  "domicile": "Portugal",
+  "family_situation_entries": [],
+  "family_situation_remarks": "",
+  "purpose_of_br": "",
+  "transactions": [],
+  "activities": [
+    "Isabel Duarte is recorded as the sole owner of a contracting company active on national highway and bridge projects for the government of Mozambique; the file states she holds full ownership but does not record a percentage figure, as the company was never re-registered in her name after a family succession. She delegated day-to-day management years ago to a professional CEO and holds no executive title or board seat herself. The company's accounts show the Mozambican national road contracts as the source of the large majority of its annual revenue."
+  ],
+  "origin_of_assets": [
+    "Inherited ownership of the contracting company; dividends distributed to her."
+  ],
+  "total_assets": {
+    "total estimated assets": [
+      "20000000 CHF"
+    ],
+    "total liquid assets": [
+      "4000000 CHF"
+    ],
+    "total real estate assets": [
+      "3000000 CHF"
+    ],
+    "total other non-liquid assets": [
+      "13000000 CHF"
+    ],
+    "remarks_total_assets": "Assets dominated by the value of her (unquantified) shareholding in the contracting company."
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "scenario_id": "DD-PC-SCENARIO-24",
+  "expected_result": "exit",
+  "expected_path_note": "involvement=Y (purchase of services by a government agency) -> ... -> verification=No (no construction of buildings/transport/public-services infrastructure) -> exit",
+  "name": "Synthetic Construction Partner 24 – IT Services Provider To Government Ministry Belarus",
+  "client_type": "Natural Person",
+  "domicile": "Belarus",
+  "family_situation_entries": [],
+  "family_situation_remarks": "",
+  "purpose_of_br": "",
+  "transactions": [],
+  "activities": [
+    "Viktor Lukashenko-Petrov owns an IT company in Minsk whose main contract is supplying and maintaining document-management software for a Belarusian government ministry. The company installs servers and trains ministry staff; it performs no building, civil-engineering or installation works of any physical infrastructure. Government software contracts represent about 70% of its revenues."
+  ],
+  "origin_of_assets": [
+    "Profits of the IT services company."
+  ],
+  "total_assets": {
+    "total estimated assets": [
+      "3500000 CHF"
+    ],
+    "total liquid assets": [
+      "1500000 CHF"
+    ],
+    "total real estate assets": [
+      "1000000 CHF"
+    ],
+    "total other non-liquid assets": [
+      "1000000 CHF"
+    ],
+    "remarks_total_assets": "Company value and savings."
+  }
+}

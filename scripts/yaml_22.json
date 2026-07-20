@@ -1,0 +1,33 @@
+{
+  "scenario_id": "DD-PC-SCENARIO-22",
+  "expected_result": "missing_information",
+  "expected_path_note": "SC1=N -> SC2=N (works alone, no company stake) -> DE4=MI (no income/wealth shares documented) -> missing_information",
+  "name": "Synthetic Construction Partner 22 – Independent Contractor No Financial Breakdown",
+  "client_type": "Natural Person",
+  "domicile": "Lebanon",
+  "family_situation_entries": [],
+  "family_situation_remarks": "",
+  "purpose_of_br": "",
+  "transactions": [],
+  "activities": [
+    "Georges Nassar works as an independent construction manager who takes on assignments coordinating building projects for public authorities in Iraq, alongside occasional private villa projects in Beirut. He operates without a company and holds no shareholdings. The file contains no financial statements and no breakdown of how his income or wealth splits between the Iraqi public assignments and his private work; the adviser has requested this information twice without response."
+  ],
+  "origin_of_assets": [
+    "Stated as professional fees; no documentation on file."
+  ],
+  "total_assets": {
+    "total estimated assets": [
+      "2500000 CHF"
+    ],
+    "total liquid assets": [
+      "1000000 CHF"
+    ],
+    "total real estate assets": [
+      "1200000 CHF"
+    ],
+    "total other non-liquid assets": [
+      "300000 CHF"
+    ],
+    "remarks_total_assets": "Client-stated estimate; no supporting documents."
+  }
+}

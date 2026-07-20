@@ -1,0 +1,33 @@
+{
+  "scenario_id": "DD-PC-SCENARIO-23",
+  "expected_result": "missing_information",
+  "expected_path_note": "sensitive_country_check=MI (which countries' governments is not documented) -> missing_information",
+  "name": "Synthetic Construction Partner 23 – Contractor Countries Of Projects Not Stated",
+  "client_type": "Legal Entity",
+  "domicile": "Cyprus",
+  "family_situation_entries": [],
+  "family_situation_remarks": "",
+  "purpose_of_br": "",
+  "transactions": [],
+  "activities": [
+    "Meridian Contracting Ltd is described in the onboarding notes as a contractor executing 'government infrastructure projects abroad' — roads and utilities commissioned by national authorities — which form the bulk of its business. The notes do not identify the countries in which these projects are located or which governments award the contracts, and the requested project list and contract summaries have not yet been received."
+  ],
+  "origin_of_assets": [
+    "Contracting profits; project documentation outstanding."
+  ],
+  "total_assets": {
+    "total estimated assets": [
+      "20000000 CHF"
+    ],
+    "total liquid assets": [
+      "6000000 CHF"
+    ],
+    "total real estate assets": [
+      "2000000 CHF"
+    ],
+    "total other non-liquid assets": [
+      "12000000 CHF"
+    ],
+    "remarks_total_assets": "Equipment and receivables; geographic breakdown not documented."
+  }
+}

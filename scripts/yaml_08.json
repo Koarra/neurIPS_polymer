@@ -1,0 +1,33 @@
+{
+  "scenario_id": "DD-PC-SCENARIO-08",
+  "expected_result": "exit",
+  "expected_path_note": "government_level_check=No (contracts solely with city/regional authorities) -> exit",
+  "name": "Synthetic Construction Partner 08 – Municipal Roadworks Contractor Uzbekistan Regional Only",
+  "client_type": "Natural Person",
+  "domicile": "Uzbekistan",
+  "family_situation_entries": [],
+  "family_situation_remarks": "",
+  "purpose_of_br": "",
+  "transactions": [],
+  "activities": [
+    "Rustam Yusupov owns a road-repair company in Samarkand. All of the company's contracts, as listed in the file, are with the Samarkand city administration and the surrounding regional authority: resurfacing municipal streets, repairing local bridges and maintaining district roads. The file explicitly notes that the company has never held a contract with a national ministry and does not bid for them; national tenders are handled by larger state-linked firms."
+  ],
+  "origin_of_assets": [
+    "Profits of the municipal roadworks business."
+  ],
+  "total_assets": {
+    "total estimated assets": [
+      "4000000 CHF"
+    ],
+    "total liquid assets": [
+      "1000000 CHF"
+    ],
+    "total real estate assets": [
+      "1500000 CHF"
+    ],
+    "total other non-liquid assets": [
+      "1500000 CHF"
+    ],
+    "remarks_total_assets": "Equipment and local real estate."
+  }
+}

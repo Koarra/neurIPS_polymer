@@ -1,0 +1,33 @@
+{
+  "scenario_id": "DD-PC-SCENARIO-17",
+  "expected_result": "exit",
+  "expected_path_note": "SC1=N -> SC2=Y -> SC3=N (8%) -> DE1-3 -> DE4=N (dividends are a small part of income/wealth) -> exit",
+  "name": "Synthetic Construction Partner 17 – Passive Eight Percent Shareholder Ethiopia Dam Contractor",
+  "client_type": "Natural Person",
+  "domicile": "Italy",
+  "family_situation_entries": [],
+  "family_situation_remarks": "",
+  "purpose_of_br": "",
+  "transactions": [],
+  "activities": [
+    "Paolo Ricci holds an 8% stake, per the register, in a contractor that builds irrigation dams for Ethiopia's federal water ministry. He acquired the stake as a financial investment through a private-equity vehicle; he has no board seat, no management role and no operational involvement. The dividends from this stake amounted to about 6% of his income last year, and the stake represents roughly a tenth of his wealth, the rest being his Milan engineering-consultancy business and securities."
+  ],
+  "origin_of_assets": [
+    "Engineering consultancy earnings and financial investments."
+  ],
+  "total_assets": {
+    "total estimated assets": [
+      "12000000 CHF"
+    ],
+    "total liquid assets": [
+      "5000000 CHF"
+    ],
+    "total real estate assets": [
+      "4000000 CHF"
+    ],
+    "total other non-liquid assets": [
+      "3000000 CHF"
+    ],
+    "remarks_total_assets": "Consultancy business, securities portfolio, minority stake."
+  }
+}

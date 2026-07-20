@@ -1,0 +1,33 @@
+{
+  "scenario_id": "DD-PC-SCENARIO-01",
+  "expected_result": "siap",
+  "expected_path_note": "involvement=Y -> exclusions=N -> level=Y (national ministry) -> country=Y (Turkmenistan) -> verification=Y (transport) -> business_share=Y (70%) -> SC path N/A for entity -> DE4 business revenues=Y -> final=N -> siap",
+  "name": "Synthetic Construction Partner 01 – Entity Contractor National Infrastructure Turkmenistan",
+  "client_type": "Legal Entity",
+  "domicile": "Switzerland",
+  "family_situation_entries": [],
+  "family_situation_remarks": "",
+  "purpose_of_br": "",
+  "transactions": [],
+  "activities": [
+    "Karakum Infrastructure AG is a Swiss-registered civil-engineering contractor. Its principal client is the Ministry of Construction of Turkmenistan, for which it builds highway sections and two railway bridges under contracts awarded in Ashgabat. Audited statements show that about 70% of the company's annual revenues come from these Turkmen government contracts; the remainder comes from private industrial buildings in Switzerland."
+  ],
+  "origin_of_assets": [
+    "Company capital built from retained earnings of the contracting business."
+  ],
+  "total_assets": {
+    "total estimated assets": [
+      "45000000 CHF"
+    ],
+    "total liquid assets": [
+      "9000000 CHF"
+    ],
+    "total real estate assets": [
+      "6000000 CHF"
+    ],
+    "total other non-liquid assets": [
+      "30000000 CHF"
+    ],
+    "remarks_total_assets": "Assets are dominated by plant, equipment and receivables from the Turkmen contracts."
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "scenario_id": "DD-PC-SCENARIO-30",
+  "expected_result": "siap",
+  "expected_path_note": "business_share=Y -> SC1=Y (was owner/board) -> set_flag -> final_status_check=Y (sale and resignation confirmed, no current role) -> cooled_down_check=MI (sale/resignation date not documented, cannot establish 12mo/24mo) -> siap (MI at cooled_down_check routes to siap, conservative - do not assume cooldown is satisfied without knowing timing)",
+  "name": "Synthetic Construction Partner 30 – Former Owner Exit Date Not Documented",
+  "client_type": "Natural Person",
+  "domicile": "Costa Rica",
+  "family_situation_entries": [],
+  "family_situation_remarks": "",
+  "purpose_of_br": "",
+  "transactions": [],
+  "activities": [
+    "Camila Fuentes sold her ownership stake in a contracting company that built government administrative offices for the national government of Angola and resigned from its board; the company derived the large majority of its revenue from these contracts. She now has no role, shares or governance rights in the company. The file confirms the sale and resignation took place but does not state when: the client could not confirm a date, and no share-purchase agreement or resignation letter with a date has been obtained."
+  ],
+  "origin_of_assets": [
+    "Proceeds from the sale of her shareholding, now held in a diversified investment portfolio."
+  ],
+  "total_assets": {
+    "total estimated assets": [
+      "12000000 CHF"
+    ],
+    "total liquid assets": [
+      "9000000 CHF"
+    ],
+    "total real estate assets": [
+      "2000000 CHF"
+    ],
+    "total other non-liquid assets": [
+      "1000000 CHF"
+    ],
+    "remarks_total_assets": "Diversified portfolio funded by the (undated) sale of her shareholding."
+  }
+}

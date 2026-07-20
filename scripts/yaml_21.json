@@ -1,0 +1,33 @@
+{
+  "scenario_id": "DD-PC-SCENARIO-21",
+  "expected_result": "missing_information",
+  "expected_path_note": "SC2=Y (is a shareholder) -> SC3=MI (percentage not stated anywhere) -> missing_information",
+  "name": "Synthetic Construction Partner 21 – Shareholder Stake Percentage Not Documented",
+  "client_type": "Natural Person",
+  "domicile": "Georgia",
+  "family_situation_entries": [],
+  "family_situation_remarks": "",
+  "purpose_of_br": "",
+  "transactions": [],
+  "activities": [
+    "Nino Beridze is described in the file as 'a shareholder' of a contracting company that builds government administrative buildings in Turkmenistan, which generates the majority of its revenues from these national contracts. Neither the account application nor the corporate documents on file state the size of her shareholding, and the commercial-register extract has not yet been provided. She has no management or board role."
+  ],
+  "origin_of_assets": [
+    "Dividends from the shareholding and rental income; documentation pending."
+  ],
+  "total_assets": {
+    "total estimated assets": [
+      "3000000 CHF"
+    ],
+    "total liquid assets": [
+      "1200000 CHF"
+    ],
+    "total real estate assets": [
+      "1300000 CHF"
+    ],
+    "total other non-liquid assets": [
+      "500000 CHF"
+    ],
+    "remarks_total_assets": "Composition per client statement; register extract outstanding."
+  }
+}
