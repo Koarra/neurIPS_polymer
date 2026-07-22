@@ -1,266 +1,269 @@
-"""
-Generate MRMP API-formatted JSON payloads for KMPI #1 and KMPI #2
-from a completed quarterly report evaluation, and for KMPI #4
-(bi-annual productivity) from a completed bi-annual report.
 
-Output format matches GET /api/v1/kmpi_value response schema.
-One file per KMPI, saved alongside the internal report.
-"""
-
-import json
-from datetime import datetime, timezone
-from pathlib import Path
+def get_designated_countries() -> list[dict]:
+    """Current '**' designated countries for sensitive charities."""
+    return _load_country_list("designated_countries.json")
 
 
-def _quarter_start_date(quarter: str) -> str:
-    """Return the first day of the quarter as YYYY-MM-DD.
+def get_sensitive_countries() -> list[dict]:
+    """Current sensitive countries (SCAP jurisdictions) for public construction.
 
-    Args:
-        quarter: e.g. "2026_Q1"
+    Distinct tier from the charity '**' designated set - kept in its own file so
+    the two policies can diverge without touching each other's logic.
     """
-    year, q = quarter.split("_Q")
-    month = (int(q) - 1) * 3 + 1
-    return f"{year}-{month:02d}-01"
+    return _load_country_list("sensitive_countries.json")
 
 
-def _build_payload(
-    definition_id: str,
-    kmpi_value_id: int,
-    kmpi_eval: dict,
-    quarter: str,
-    delivery_id: str,
-    sender_name: str,
-    model_version: str,
-    report_link: str,
-    run_id: str,
-) -> dict:
-    """Build a single MRMP API payload dict for one KMPI."""
-    now = datetime.now(timezone.utc)
-    now_iso = now.strftime("%Y-%m-%dT%H:%M:%S.000Z")
-    today = now.strftime("%Y-%m-%d")
+def _country_matcher(codes: set, names: set):
+    """Build the designation/sensitivity predicate shared by the country checks.
 
-    value = kmpi_eval["average"]
-    passed = kmpi_eval["passed"]
-    threshold = kmpi_eval["threshold"]
-    kmpi_name = kmpi_eval["name"]  # "Entity Recall" or "Crime Recall"
-    kmpi_num = kmpi_eval["kmpi"]   # "#1" or "#2"
-
-    result = "PASS" if passed else "FAIL"
-    rag_status = "Green" if passed else "Red"
-
-    if passed:
-        conclusion = (
-            f"PASS: {kmpi_name} of {value:.2%} met the "
-            f"{threshold:.0%} threshold across 3 months in {quarter.replace('_', ' ')}."
-        )
-    else:
-        failed = kmpi_eval.get("failed_months", [])
-        failed_str = ", ".join(m.get("month", "") for m in failed)
-        conclusion = (
-            f"FAIL: {kmpi_name} of {value:.2%} fell below the "
-            f"{threshold:.0%} threshold in {quarter.replace('_', ' ')}. "
-            f"Failed months: {failed_str}. Root cause analysis required."
-        )
-
-    return {
-        definition_id: [
-            {
-                "kmpi_value_id": kmpi_value_id,
-                "definitionId": definition_id,
-                "version": model_version,
-                "value_time_period": _quarter_start_date(quarter),
-                "sender_name": sender_name,
-                "creation_date": today,
-                "value": f"{value:.4f}",
-                "value_commentary": (
-                    f"{kmpi_name} score for Article Detective averaged across 3 monthly "
-                    f"test runs ({quarter.replace('_', ' ')}). Threshold: {threshold:.0%}."
-                ),
-                "link": report_link,
-                "run_id": run_id,
-                "threshold_hit": f"{threshold:.2f}",
-                "result": result,
-                "rag_status": rag_status,
-                "commentary": (
-                    f"KMPI {kmpi_num} measures the ability of Article Detective to correctly "
-                    f"{'identify named entities (persons and companies)' if kmpi_num == '#1' else 'classify financial crimes'} "
-                    f"in articles compared to reference outputs. "
-                    f"A score >= {threshold:.0%} is required to pass."
-                ),
-                "conclusion": conclusion,
-                "delivery_id": delivery_id,
-                "active_flag": True,
-                "upload_date": now_iso,
-                "last_modified_date": now_iso,
-                "last_modified_user": sender_name,
-                "adhoc": False,
-                "skipowner": False,
-            }
-        ]
-    }
-
-
-def _semester_start_date(period: str) -> str:
-    """Return the first day of the half-year period as YYYY-MM-DD.
-
-    Args:
-        period: e.g. "2026_H1"
+    ISO code is the primary key (immune to naming variants such as 'Syria' vs
+    'Syrian Arab Republic'); name match is the fallback when the extraction
+    could not supply a code.
     """
-    year, semester = period.split("_")
-    month = 1 if semester == "H1" else 7
-    return f"{year}-{month:02d}-01"
+
+    def is_match(ref: "CountryRef") -> bool:
+        if ref.iso_alpha2 and ref.iso_alpha2.strip().upper() in codes:
+            return True
+        return ref.country.strip().lower() in names
+
+    return is_match
 
 
-def generate_mrmp_productivity_json(
-    report: dict,
-    output_dir: Path,
-    config,
-) -> Path:
-    """Generate and save the MRMP API JSON file for KMPI #4 (productivity).
-
-    Unlike KMPI #1/#2, the threshold is an upper bound: the KMPI passes
-    only if the average number of articles processed per person stayed
-    at or below MAX_ARTICLES_PER_PERSON in every month of the half-year.
-
-    Args:
-        report: Report dict produced by biannual_productivity.py.
-        output_dir: Directory where the file will be saved.
-        config: The kmpi_monitoring config module.
-
-    Returns:
-        Path to the saved JSON file.
-    """
-    now = datetime.now(timezone.utc)
-    now_iso = now.strftime("%Y-%m-%dT%H:%M:%S.000Z")
-    today = now.strftime("%Y-%m-%d")
-
-    period = report["period"]  # e.g. "2026_H1"
-    period_label = period.replace("_", " ")
-    passed = report["passed"]
-    max_avg = max(m["avg_articles_per_person"] for m in report["monthly_values"])
-
-    result = "PASS" if passed else "FAIL"
-    rag_status = "Green" if passed else "Red"
-
-    if passed:
-        conclusion = (
-            f"PASS: Monthly average of articles processed per person peaked at "
-            f"{max_avg:.0f}, staying below the {config.MAX_ARTICLES_PER_PERSON} "
-            f"early-warning limit in every month of {period_label}."
-        )
-    else:
-        exceeded_str = ", ".join(
-            f"{m['month']} ({m['avg']:.0f})" for m in report["exceeded_months"]
-        )
-        conclusion = (
-            f"FAIL: Monthly average of articles processed per person exceeded the "
-            f"{config.MAX_ARTICLES_PER_PERSON} early-warning limit in {period_label} "
-            f"({exceeded_str}). IRR re-assessment to be triggered by the Model Owner."
-        )
-
-    payload = {
-        config.MRMP_KMPI4_DEFINITION_ID: [
-            {
-                "kmpi_value_id": 4,
-                "definitionId": config.MRMP_KMPI4_DEFINITION_ID,
-                "version": config.MRMP_MODEL_VERSION,
-                "value_time_period": _semester_start_date(period),
-                "sender_name": config.MRMP_SENDER_NAME,
-                "creation_date": today,
-                "value": f"{max_avg:.0f}",
-                "value_commentary": (
-                    f"Highest monthly average of articles processed per GFIU team "
-                    f"member during {period_label}. Baseline: "
-                    f"{config.BASELINE_ARTICLES_PER_PERSON} articles/person/month; "
-                    f"early-warning limit: {config.MAX_ARTICLES_PER_PERSON} "
-                    f"(100% increase)."
-                ),
-                "link": config.MRMP_REPORT_LINK,
-                "run_id": f"run_{period}",
-                "threshold_hit": f"{config.MAX_ARTICLES_PER_PERSON}",
-                "result": result,
-                "rag_status": rag_status,
-                "commentary": (
-                    "KMPI #4 monitors the average number of articles processed per "
-                    "person per month by GFIU team members as an early-warning "
-                    "indicator for materiality re-assessment. The manual baseline "
-                    f"is estimated at {config.BASELINE_ARTICLES_PER_PERSON} "
-                    "articles/person/month; if any month of the half-year exceeds a "
-                    f"100% increase ({config.MAX_ARTICLES_PER_PERSON} articles), the "
-                    "KMPI fails and an IRR re-assessment is triggered by the Model "
-                    "Owner."
-                ),
-                "conclusion": conclusion,
-                "delivery_id": config.MRMP_DELIVERY_ID_KMPI4,
-                "active_flag": True,
-                "upload_date": now_iso,
-                "last_modified_date": now_iso,
-                "last_modified_user": config.MRMP_SENDER_NAME,
-                "adhoc": False,
-                "skipowner": False,
-            }
-        ]
-    }
-
-    file = output_dir / f"mrmp_{config.MRMP_KMPI4_DEFINITION_ID}_{period}.json"
-    with open(file, "w") as f:
-        json.dump(payload, f, indent=2)
-
-    return file
-
-
-def generate_mrmp_api_json(
-    kmpi1: dict,
-    kmpi2: dict,
-    quarter: str,
-    output_dir: Path,
-    config,
-) -> tuple[Path, Path]:
-    """Generate and save MRMP API JSON files for KMPI #1 and KMPI #2.
-
-    Args:
-        kmpi1: Result dict from evaluate_entity_recall().
-        kmpi2: Result dict from evaluate_crime_recall().
-        quarter: Quarter string, e.g. "2026_Q1".
-        output_dir: Directory where files will be saved (quarterly reports folder).
-        config: The kmpi_monitoring config module.
-
-    Returns:
-        Tuple of (path_to_kmpi1_file, path_to_kmpi2_file).
-    """
-    run_id = f"run_{quarter}"
-
-    payload1 = _build_payload(
-        definition_id=config.MRMP_KMPI1_DEFINITION_ID,
-        kmpi_value_id=1,
-        kmpi_eval=kmpi1,
-        quarter=quarter,
-        delivery_id=config.MRMP_DELIVERY_ID_KMPI1,
-        sender_name=config.MRMP_SENDER_NAME,
-        model_version=config.MRMP_MODEL_VERSION,
-        report_link=config.MRMP_REPORT_LINK,
-        run_id=run_id,
+def _country_sets(rows: list[dict]) -> tuple[set, set]:
+    """Split a country list into upper-cased codes and lower-cased names."""
+    return (
+        {r["code"].strip().upper() for r in rows},
+        {r["name"].strip().lower() for r in rows},
     )
 
-    payload2 = _build_payload(
-        definition_id=config.MRMP_KMPI2_DEFINITION_ID,
-        kmpi_value_id=2,
-        kmpi_eval=kmpi2,
-        quarter=quarter,
-        delivery_id=config.MRMP_DELIVERY_ID_KMPI2,
-        sender_name=config.MRMP_SENDER_NAME,
-        model_version=config.MRMP_MODEL_VERSION,
-        report_link=config.MRMP_REPORT_LINK,
-        run_id=run_id,
+
+def _extract_countries(state, schema, prompt_template):
+    """Run the geographic-fact extraction for a country check.
+
+    Returns the parsed schema instance, or None when the LLM call fails - the
+    caller turns that into material Missing Information.
+    """
+    try:
+        llm = AzureChatOpenAI(**AZURE_OPENAI_LLM_CONFIG).with_structured_output(schema)
+        return llm.invoke(
+            [
+                HumanMessage(
+                    prompt_template.format(
+                        client_notes=state["client_notes"],
+                        activity=state["client_activity"],
+                    )
+                )
+            ]
+        )
+    except Exception:
+        return None
+
+
+def _finish_country_check(
+    state, node_name: str, answer: str, reason: str, mi_details: dict, **fmt
+):
+    """Record a country-check outcome on the state.
+
+    Reason and materiality first, answer last: result_fetcher routes on the
+    LAST entry in node_outputs, so the final append must be the Yes/No/MI answer.
+    """
+    state["node_outputs"].append({f"{node_name}_reason": reason})
+    if answer == "Missing Information":
+        state["node_outputs"].append({f"{node_name}_materiality": "material"})
+        state["missing_info_reasons"] = state.get("missing_info_reasons", []) + [
+            mi_details[reason].format(**fmt)
+        ]
+
+    state["node_outputs"].append({node_name: answer})
+    return state
+
+
+
+=======
+
+def decide_designated_country(
+    extraction: "CharityCountryExtraction", designated_codes: set, designated_names: set
+) -> tuple[str, str, List[str]]:
+    """Decide the charity designated-country outcome. Pure: no LLM, no IO.
+
+
+    Returns (answer, reason, unknown_designated) so the caller can render the
+    MI detail text.
+    """
+    is_designated = _country_matcher(designated_codes, designated_names)
+
+
+
+
+        return "Yes", "established_in_designated_country", []
+
+
+
+
+         return "Yes", limb, []
+
+
+
+        return "Missing Information", "countries_not_determinable", []
+
+
+
+
+  return "Missing Information", "designated_share_not_stated", unknown_designated
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def designated_country_check_node(state):
+    """Compute node for the sensitive_charities tree (state: SIAPState).
+
+    Fail safe, never crash: this node's failures become material Missing
+    Information - an already-screened charity must surface, not error out.
+    """
+    node = "designated_country_check"
+
+    try:
+        codes, names = _country_sets(get_designated_countries())
+    except Exception:
+        return _finish_country_check(
+            state, node, "Missing Information", "designated_list_unavailable",
+            _MI_DETAILS, countries="",
+        )
+
+    extraction = _extract_countries(
+        state, CharityCountryExtraction, CHARITY_COUNTRY_EXTRACTION_PROMPT
+    )
+    if extraction is None:
+        return _finish_country_check(
+            state, node, "Missing Information", "extraction_failed",
+            _MI_DETAILS, countries="",
+        )
+
+    answer, reason, unknown = decide_designated_country(extraction, codes, names)
+    return _finish_country_check(
+        state, node, answer, reason, _MI_DETAILS, countries=", ".join(unknown)
     )
 
-    file1 = output_dir / f"mrmp_{config.MRMP_KMPI1_DEFINITION_ID}_{quarter}.json"
-    file2 = output_dir / f"mrmp_{config.MRMP_KMPI2_DEFINITION_ID}_{quarter}.json"
 
-    with open(file1, "w") as f:
-        json.dump(payload1, f, indent=2)
+function_mapping["designated_country_check"] = designated_country_check_node
 
-    with open(file2, "w") as f:
-        json.dump(payload2, f, indent=2)
 
-    return file1, file2
+# ---------------------------------------------------------------------------
+# P
+# ---------------------------------------------------------------------------
+
+
+class ConstructionCountryExtraction(BaseModel):
+    contracting_government_countries: List[CountryRef] = Field(
+        description="Countries whose government awarded the client's construction "
+        "/ infrastructure contracts, or where those government construction "
+        "projects are located; empty if not determinable from the notes"
+    )
+    countries_determinable: bool = Field(
+        description="False when the notes do not allow determining the countries "
+        "of the client's government construction contracts at all"
+    )
+
+
+CONSTRUCTION_COUNTRY_EXTRACTION_PROMPT = """
+You are an expert compliance officer. Extract ONLY the geographic facts below from
+the client notes - do not judge whether any country is sensitive or high-risk.
+
+contracting_government_countries: every country whose government (national/central/
+federal, or regional/local) awarded the client's construction or infrastructure
+contracts, or where the government construction/infrastructure projects are
+located. Include past and present projects. Use the most recent ISO 3166 English
+country names, and give each country's ISO 3166-1 alpha-2 code (2 letters); leave
+the code null if unsure. Set countries_determinable to false when the notes do not
+allow determining the countries of the government construction work at all.
+
+Client notes:
+{client_notes}
+
+Activity under assessment:
+{activity}
+"""
+
+_PC_MI_DETAILS = {
+    "countries_not_determinable": (
+        "MATERIAL missing information: the countries of the client's government "
+        "construction / infrastructure contracts cannot be determined from the "
+        "notes, so the sensitive-country check cannot be assessed."
+    ),
+    "extraction_failed": (
+        "MATERIAL missing information: the country extraction failed, so the "
+        "sensitive-country check could not be assessed."
+    ),
+    "sensitive_list_unavailable": (
+        "MATERIAL missing information: the sensitive-country list could not be "
+        "loaded, so the sensitive-country check could not be assessed."
+    ),
+}
+
+
+def decide_sensitive_country(
+    extraction: "ConstructionCountryExtraction",
+    sensitive_codes: set,
+    sensitive_names: set,
+) -> tuple[str, str]:
+    """Decide the public-construction sensitive-country outcome. Pure: no LLM, no IO."""
+    is_sensitive = _country_matcher(sensitive_codes, sensitive_names)
+
+    # Guard: a 'determinable' claim with nothing extracted is not determinable.
+    if (
+        extraction.countries_determinable
+        and not extraction.contracting_government_countries
+    ):
+        extraction.countries_determinable = False
+
+    if any(is_sensitive(c) for c in extraction.contracting_government_countries):
+        return "Yes", "government_in_sensitive_country"
+
+    if not extraction.countries_determinable:
+        return "Missing Information", "countries_not_determinable"
+
+    # Countries are known and none is sensitive -> out of scope for this category.
+    return "No", "no_sensitive_country_nexus"
+
+
+def sensitive_country_check_node(state):
+    """Compute node for the public_construction tree (state: SIAPState).
+
+    Fail safe, never crash: this node's failures become material Missing
+    Information - the category-defining criterion must surface, not error out.
+    """
+    node = "sensitive_country_check"
+
+    try:
+        codes, names = _country_sets(get_sensitive_countries())
+    except Exception:
+        return _finish_country_check(
+            state, node, "Missing Information", "sensitive_list_unavailable",
+            _PC_MI_DETAILS,
+        )
+
+    extraction = _extract_countries(
+        state, ConstructionCountryExtraction, CONSTRUCTION_COUNTRY_EXTRACTION_PROMPT
+    )
+    if extraction is None:
+        return _finish_country_check(
+            state, node, "Missing Information", "extraction_failed", _PC_MI_DETAILS
+        )
+
+    answer, reason = decide_sensitive_country(extraction, codes, names)
+    return _finish_country_check(state, node, answer, reason, _PC_MI_DETAILS)
+
+
+function_mapping["sensitive_country_check"] = sensitive_country_check_node
+﻿
